@@ -1,3 +1,3 @@
-FROM alpine:3.14
+FROM nginx:1.23.3-alpine
 RUN apk add --no-cache rsync
-ENTRYPOINT /bin/sh
+COPY webui /usr/share/nginx/html

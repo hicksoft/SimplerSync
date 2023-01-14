@@ -1,0 +1,9 @@
+#!/bin/sh
+
+cd webui
+npm run build
+
+mv build ../docker/webui
+cd ../docker
+
+docker build -t simplersync .
