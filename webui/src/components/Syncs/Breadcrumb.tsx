@@ -1,4 +1,3 @@
-import react from "react";
 import Breadcrumb from "react-bootstrap/Breadcrumb";
 
 interface CrumbProps {
@@ -8,7 +7,7 @@ interface CrumbProps {
 
 function Crumb({ activeSync, navigateHome }: CrumbProps) {
   return (
-    <Breadcrumb>
+    <Breadcrumb className="mt-3">
       <Breadcrumb.Item onClick={navigateHome} active={activeSync === ""}>
         All Syncs
       </Breadcrumb.Item>
