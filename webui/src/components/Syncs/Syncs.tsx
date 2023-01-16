@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import Breadcrumb from "./Breadcrumb";
 import Create from "./Create";
+import List from "./List";
 
 function Syncs() {
   const [activeSync, setActiveSync] = useState("test");
@@ -11,6 +12,7 @@ function Syncs() {
     <div>
       <Breadcrumb activeSync={activeSync} navigateHome={clearActiveSync} />
       <Create />
+      <List />
     </div>
   );
 }

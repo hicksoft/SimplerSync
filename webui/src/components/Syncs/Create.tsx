@@ -28,6 +28,8 @@ function Create() {
     handleClose();
   };
 
+  const allowSubmit = name !== "";
+
   return (
     <>
       <Button variant="success" size="lg" onClick={handleShow}>
@@ -66,7 +68,11 @@ function Create() {
           <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="success" onClick={createSync} disabled={name === ""}>
+          <Button
+            variant="success"
+            onClick={createSync}
+            disabled={!allowSubmit}
+          >
             Create
           </Button>
         </Modal.Footer>
