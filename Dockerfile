@@ -19,6 +19,6 @@ RUN npm ci --only=production
 COPY server/build /server
 
 # Expose webui and run
-EXPOSE 9292
+EXPOSE 9191
 ENTRYPOINT ["/entrypoint"]
 CMD ["node", "index.js"]

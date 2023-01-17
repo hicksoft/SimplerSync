@@ -1,9 +1,11 @@
 #!/bin/sh
 
 cd webui
+rm -r build
 npm run build
 
 cd ../server
+rm -r build
 npx tsc
 
 cd ../
