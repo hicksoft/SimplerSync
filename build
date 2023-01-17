@@ -1,12 +1,13 @@
 #!/bin/sh
 
 cd webui
-rm -r build
 npm run build
 
 cd ../server
-rm -r build
 npx tsc
 
 cd ../
 docker build -t simplersync .
+
+rm -r webui/build
+rm -r server/build
