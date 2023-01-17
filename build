@@ -4,5 +4,11 @@ cd webui
 npm run build
 mv build ../docker/webui
 
-cd ../docker
+cd ../
+ln -s ./server ./docker/server
+
+cd docker
 docker build -t simplersync .
+
+rm -r webui
+rm server

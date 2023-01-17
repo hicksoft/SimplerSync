@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Start cron
+service cron start
+
+# Hand off to the CMD
+#exec "$@"
+tail -f /dev/null
