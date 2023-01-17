@@ -3,5 +3,8 @@
 cd webui
 npm run build
 
+cd ../server
+npx tsc
+
 cd ../
 docker build -t simplersync .
