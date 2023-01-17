@@ -10,13 +10,12 @@ COPY entrypoint /entrypoint
 RUN chmod +x /entrypoint
 
 # Prepare webui
-COPY webui /webui
+COPY webui/build /webui
 
 # Prepare server
+COPY server /server
 WORKDIR /server
-COPY server/package*.json ./
 RUN npm ci --only=production
-COPY . .
 
 # Expose webui and run
 EXPOSE 9292
