@@ -4,7 +4,7 @@ cd webui
 npm run build
 
 cd ../server
-npx tsc
+npx tsc -p tsconfig.build.json
 
 cd ../
 docker build -t simplersync .
