@@ -1,14 +1,14 @@
 // Dependency Injection
 
 interface IDeps {
-  cronDirectory?: string;
-  configSyncs?: string;
+  cronDirectory: string;
+  configDirectory: string;
 }
 
 export let cronDirectory: IDeps["cronDirectory"];
-export let configSyncs: IDeps["configSyncs"];
+export let configDirectory: IDeps["configDirectory"];
 
 export default function inject(deps: IDeps) {
   cronDirectory = deps.cronDirectory;
-  configSyncs = deps.configSyncs;
+  configDirectory = deps.configDirectory;
 }

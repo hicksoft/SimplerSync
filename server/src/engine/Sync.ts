@@ -4,7 +4,7 @@ import fs from "fs";
 import Cronjob from "./Cronjob";
 import { Pattern } from "./patterns";
 import cronjobFactory from "./cronjobFactory";
-import { cronDirectory, configSyncs } from "./di";
+import { cronDirectory, configDirectory } from "./di";
 
 interface IPropsCreate {
   name: string;
@@ -25,7 +25,7 @@ export default class Sync {
 
   constructor(props: IPropsCreate | IPropsRead) {
     if ("id" in props) {
-      const config = this._getConfig()[props.id];
+      const config = this._readConfig()[props.id];
 
       this.id = props.id;
       this.name = config.name;
@@ -48,7 +48,7 @@ export default class Sync {
 
   delete() {
     this._deleteCron();
-    this._deleteCron();
+    this._deleteConfig();
   }
 
   toJson() {
@@ -67,32 +67,42 @@ export default class Sync {
     return cron;
   }
 
-  _getCronPath() {
+  _getCronFilePath() {
     return `${cronDirectory}/${this.id}`;
   }
 
-  _getConfigPath() {
-    return configSyncs as string;
+  _getConfigFilePath() {
+    return `${configDirectory}/syncs.json`;
+  }
+
+  _writeCron() {
+    const file = this._getCronFilePath();
+    const contents = this.cron.toString();
+    fs.writeFileSync(file, contents);
   }
 
   _saveCron() {
-    const path = this._getCronPath();
-    const contents = this.cron.toString();
-    fs.writeFileSync(path, contents);
+    this._writeCron();
   }
 
   _deleteCron() {
-    const path = this._getCronPath();
-    if (fs.existsSync(path)) fs.rmSync(path);
+    const file = this._getCronFilePath();
+    if (fs.existsSync(file)) fs.rmSync(file);
   }
 
   _writeConfig(config: JSON) {
-    const path = this._getConfigPath();
-    fs.writeFileSync(path, JSON.stringify(config));
+    const file = this._getConfigFilePath();
+    fs.writeFileSync(file, JSON.stringify(config));
+  }
+
+  _readConfig() {
+    const file = this._getConfigFilePath();
+    if (!fs.existsSync(file)) return {};
+    else return JSON.parse(fs.readFileSync(file, "utf-8"));
   }
 
   _saveConfig() {
-    const config = this._getConfig();
+    const config = this._readConfig();
     config[this.id] = {
       name: this.name,
       description: this.description,
@@ -101,14 +111,8 @@ export default class Sync {
     this._writeConfig(config);
   }
 
-  _getConfig() {
-    const path = this._getConfigPath();
-    if (!fs.existsSync(path)) return {};
-    else return JSON.parse(fs.readFileSync(path, "utf-8"));
-  }
-
   _deleteConfig() {
-    const config = this._getConfig();
+    const config = this._readConfig();
     const { [this.id]: _, ...rest } = config;
     this._writeConfig(rest);
   }
