@@ -3,3 +3,4 @@ build/
 docker/webui/
 webui/test/config
 coverage/
+mock/
