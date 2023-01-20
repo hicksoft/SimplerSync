@@ -1,3 +1,5 @@
+import "./setup";
+
 import Cronjob from "../src/engine/Cronjob";
 
 describe("Cronjob user", () => {

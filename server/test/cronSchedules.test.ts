@@ -1,3 +1,5 @@
+import "./setup";
+
 import cronjobFactory from "../src/engine/cronjobFactory";
 import {
   DailyPattern,
