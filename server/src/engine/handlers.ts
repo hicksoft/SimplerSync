@@ -13,5 +13,5 @@ export function handleCreate(name: string, description: string) {
   const sync = new Sync({ name, description, pattern: defaultPattern });
   sync.save();
 
-  //return sync.toJson();
+  return sync.toJson();
 }

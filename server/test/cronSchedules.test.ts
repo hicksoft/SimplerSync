@@ -1,4 +1,4 @@
-import initCronjobWithSchedule from "../src/engine/cronjobFactory";
+import cronjobFactory from "../src/engine/cronjobFactory";
 import {
   DailyPattern,
   WeeklyPattern,
@@ -11,7 +11,7 @@ const testDaily = (time: Time) => {
     frequency: "daily",
     time
   };
-  const cron = initCronjobWithSchedule(pattern);
+  const cron = cronjobFactory(pattern);
   cron.user = "test";
   const result = cron.toString();
   return result.substring(0, result.indexOf(" test"));
@@ -23,7 +23,7 @@ const testWeekly = (dayOfWeek: number, time: Time) => {
     dayOfWeek,
     time
   };
-  const cron = initCronjobWithSchedule(pattern);
+  const cron = cronjobFactory(pattern);
   cron.user = "test";
   const result = cron.toString();
   return result.substring(0, result.indexOf(" test"));
@@ -35,7 +35,7 @@ const testMonthly = (dayOfMonth: number, time: Time) => {
     dayOfMonth,
     time
   };
-  const cron = initCronjobWithSchedule(pattern);
+  const cron = cronjobFactory(pattern);
   cron.user = "test";
   const result = cron.toString();
   return result.substring(0, result.indexOf(" test"));

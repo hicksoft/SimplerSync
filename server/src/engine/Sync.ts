@@ -51,6 +51,15 @@ export default class Sync {
     this._deleteCron();
   }
 
+  toJson() {
+    return {
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      pattern: this.pattern
+    };
+  }
+
   _initCron() {
     const cron = cronjobFactory(this.pattern);
     cron.user = "root";
