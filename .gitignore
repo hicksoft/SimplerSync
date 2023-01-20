@@ -2,3 +2,4 @@ node_modules/
 build/
 docker/webui/
 webui/test/config
+coverage/
