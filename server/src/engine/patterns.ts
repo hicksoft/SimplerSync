@@ -21,3 +21,29 @@ export interface DailyPattern {
 }
 
 export type Pattern = MonthlyPattern | WeeklyPattern | DailyPattern;
+
+export const defaultDailyPattern: DailyPattern = {
+  frequency: "daily",
+  time: {
+    hour: 2,
+    minute: 0
+  }
+};
+
+export const defaultWeeklyPattern: WeeklyPattern = {
+  frequency: "weekly",
+  dayOfWeek: 6,
+  time: {
+    hour: 2,
+    minute: 0
+  }
+};
+
+export const defaultMonthlyPattern: MonthlyPattern = {
+  frequency: "monthly",
+  dayOfMonth: 1,
+  time: {
+    hour: 2,
+    minute: 0
+  }
+};
