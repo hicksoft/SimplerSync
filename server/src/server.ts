@@ -1,16 +1,35 @@
 import express from "express";
-import { handleCreate } from "./engine/handlers";
+import {
+  handleCreate,
+  handleUpdate,
+  handleDelete,
+  handleRunner
+} from "./engine/handlers";
 
 const app = express();
 
-app.post("/create", (req, res) => {
+app.post("/sync", (req, res) => {
   const { name, description } = req.body;
-  const result = handleCreate(name, description);
+  const result = handleCreate({ name, description });
   res.send(result);
 });
 
-app.get("/*", function (req, res) {
-  res.send("Hello!");
+app.patch("/sync", (req, res) => {
+  const { id, name, description, pattern } = req.body;
+  const result = handleUpdate({ id, name, description, pattern });
+  res.send(result);
+});
+
+app.delete("/sync", (req, res) => {
+  const { id } = req.body;
+  const result = handleDelete({ id });
+  res.send(result);
+});
+
+app.get("/runner", (req, res) => {
+  const { id } = req.query;
+  handleRunner({ id: id as string });
+  res.send();
 });
 
 export default app;
