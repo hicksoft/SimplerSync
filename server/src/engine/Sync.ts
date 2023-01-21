@@ -17,27 +17,38 @@ interface IPropsRead {
 }
 
 export default class Sync {
-  id: IPropsRead["id"];
-  name: IPropsCreate["name"];
-  description: IPropsCreate["description"];
-  pattern: IPropsCreate["pattern"];
-  cron: Cronjob;
+  id!: IPropsRead["id"];
+  name!: IPropsCreate["name"];
+  description!: IPropsCreate["description"];
+  pattern!: IPropsCreate["pattern"];
+  cron!: Cronjob;
 
   constructor(props: IPropsCreate | IPropsRead) {
     if ("id" in props) {
       const config = this._readConfig()[props.id];
 
       this.id = props.id;
-      this.name = config.name;
-      this.description = config.description;
-      this.pattern = config.pattern;
+      this.setName(config.name);
+      this.setDescription(config.description);
+      this.setPattern(config.pattern);
     } else {
       this.id = uuid();
-      this.name = props.name;
-      this.description = props.description;
-      this.pattern = props.pattern;
+      this.setName(props.name);
+      this.setDescription(props.description);
+      this.setPattern(props.pattern);
     }
+  }
 
+  setName(name: typeof this.name) {
+    this.name = name;
+  }
+
+  setDescription(description: typeof this.description) {
+    this.description = description;
+  }
+
+  setPattern(pattern: typeof this.pattern) {
+    this.pattern = pattern;
     this.cron = this._initCron();
   }
 
