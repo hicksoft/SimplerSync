@@ -1,5 +1,14 @@
 import Sync from "./Sync";
-import { defaultDailyPattern, Pattern } from "./patterns";
+import { ISchedule } from "./Cron";
+import { IJob } from "./Job";
+
+const DEFAULT_SCHEDULE: ISchedule = {
+  frequency: "daily",
+  time: {
+    hour: "2",
+    minute: "0"
+  }
+};
 
 interface ICreateProps {
   name: string;
@@ -10,7 +19,8 @@ interface IUpdateProps {
   id: string;
   name?: string;
   description?: string;
-  pattern?: Pattern;
+  schedule?: ISchedule;
+  job?: IJob;
 }
 
 interface IDeleteProps {
@@ -22,29 +32,35 @@ interface IRunnerProps {
 }
 
 export function handleCreate({ name, description }: ICreateProps) {
-  const pattern = defaultDailyPattern;
-  const sync = new Sync({ name, description, pattern });
-  sync.save();
-  return sync.toJson();
+  const schedule = DEFAULT_SCHEDULE;
+  const sync = Sync.create({ name, description, schedule });
+  return sync.toSerializable();
 }
 
-export function handleUpdate({ id, name, description, pattern }: IUpdateProps) {
-  const sync = new Sync({ id });
+export function handleUpdate({
+  id,
+  name,
+  description,
+  schedule,
+  job
+}: IUpdateProps) {
+  const sync = Sync.load(id);
 
-  if (name) sync.setName(name);
-  if (description) sync.setDescription(description);
-  if (pattern) sync.setPattern(pattern);
+  if (name) sync.updateName(name);
+  if (description) sync.updateDescription(description);
+  if (schedule) sync.updateSchedule(schedule);
+  if (job !== null) sync.updateJob(null);
 
-  sync.save();
-  return sync.toJson();
+  return sync.toSerializable();
 }
 
 export function handleDelete({ id }: IDeleteProps) {
-  const sync = new Sync({ id });
+  const sync = Sync.load(id);
   sync.delete();
   return { id };
 }
 
 export function handleRunner({ id }: IRunnerProps) {
-  const sync = new Sync({ id });
+  const sync = Sync.load(id);
+  sync.runJob();
 }

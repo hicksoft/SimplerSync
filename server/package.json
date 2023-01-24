@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx jest --collectCoverage --collectCoverageFrom=src/** -- test/*"
+    "test": "npx jest --runInBand --collectCoverage --collectCoverageFrom=src/** -- test/*"
   },
   "author": "",
   "dependencies": {

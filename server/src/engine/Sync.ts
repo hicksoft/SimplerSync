@@ -1,130 +1,87 @@
 import { v4 as uuid } from "uuid";
-import fs from "fs";
 
-import Cronjob from "./Cronjob";
-import { Pattern } from "./patterns";
-import cronjobFactory from "./cronjobFactory";
-import { cronDirectory, configDirectory } from "./di";
+import Config from "./config";
+import Cron, { ISchedule } from "./Cron";
+import Job, { IJob } from "./Job";
 
-interface IPropsCreate {
+interface ISync {
+  id: string;
   name: string;
   description: string;
-  pattern: Pattern;
+  schedule: ISchedule;
+  job?: IJob;
 }
 
-interface IPropsRead {
+class Sync {
   id: string;
-}
+  name: string;
+  description: string;
+  cron: Cron;
+  job: Job | null;
 
-export default class Sync {
-  id!: IPropsRead["id"];
-  name!: IPropsCreate["name"];
-  description!: IPropsCreate["description"];
-  pattern!: IPropsCreate["pattern"];
-  cron!: Cronjob;
-
-  constructor(props: IPropsCreate | IPropsRead) {
-    if ("id" in props) {
-      const config = this._readConfig()[props.id];
-
-      this.id = props.id;
-      this.setName(config.name);
-      this.setDescription(config.description);
-      this.setPattern(config.pattern);
-    } else {
-      this.id = uuid();
-      this.setName(props.name);
-      this.setDescription(props.description);
-      this.setPattern(props.pattern);
-    }
+  static create(props: Omit<ISync, "id">) {
+    const id = uuid();
+    const sync = new Sync({ id, ...props });
+    sync._save();
+    return sync;
   }
 
-  setName(name: typeof this.name) {
+  static load(id: ISync["id"]) {
+    const config = Config.get(id);
+    return new Sync(config);
+  }
+
+  constructor(props: ISync) {
+    this.id = props.id;
+    this.name = props.name;
+    this.description = props.description;
+    this.cron = new Cron(props.id, props.schedule);
+    this.job = props.job ? new Job(props.job) : null;
+  }
+
+  updateName(name: string) {
     this.name = name;
+    this._save();
   }
 
-  setDescription(description: typeof this.description) {
+  updateDescription(description: string) {
     this.description = description;
+    this._save();
   }
 
-  setPattern(pattern: typeof this.pattern) {
-    this.pattern = pattern;
-    this.cron = this._initCron();
+  updateSchedule(schedule: ISchedule) {
+    this.cron = new Cron(this.id, schedule);
+    this._save();
   }
 
-  save() {
-    this._saveConfig();
-    this._saveCron();
+  updateJob(job: IJob | null) {
+    this.job = job ? new Job(job) : null;
+    this._save();
   }
 
-  delete() {
-    this._deleteCron();
-    this._deleteConfig();
-  }
-
-  toJson() {
+  toSerializable() {
     return {
       id: this.id,
       name: this.name,
       description: this.description,
-      pattern: this.pattern
+      schedule: this.cron.toSerializable(),
+      job: this.job ? this.job.toSerializable() : this.job
     };
   }
 
-  _initCron() {
-    const cron = cronjobFactory(this.pattern);
-    cron.user = "root";
-    cron.command = `runner ${this.id}`;
-    return cron;
+  delete() {
+    this.cron.delete();
+    Config.remove(this.id);
   }
 
-  _getCronFilePath() {
-    return `${cronDirectory}/${this.id}`;
+  runJob() {
+    if (this.job) this.job.run();
   }
 
-  _getConfigFilePath() {
-    return `${configDirectory}/syncs.json`;
-  }
-
-  _writeCron() {
-    const file = this._getCronFilePath();
-    const contents = this.cron.toString();
-    fs.writeFileSync(file, contents);
-  }
-
-  _saveCron() {
-    this._writeCron();
-  }
-
-  _deleteCron() {
-    const file = this._getCronFilePath();
-    if (fs.existsSync(file)) fs.rmSync(file);
-  }
-
-  _writeConfig(config: JSON) {
-    const file = this._getConfigFilePath();
-    fs.writeFileSync(file, JSON.stringify(config));
-  }
-
-  _readConfig() {
-    const file = this._getConfigFilePath();
-    if (!fs.existsSync(file)) return {};
-    else return JSON.parse(fs.readFileSync(file, "utf-8"));
-  }
-
-  _saveConfig() {
-    const config = this._readConfig();
-    config[this.id] = {
-      name: this.name,
-      description: this.description,
-      pattern: this.pattern
-    };
-    this._writeConfig(config);
-  }
-
-  _deleteConfig() {
-    const config = this._readConfig();
-    const { [this.id]: _, ...rest } = config;
-    this._writeConfig(rest);
+  _save() {
+    const { id, ...rest } = this.toSerializable();
+    Config.save(id, rest);
   }
 }
+
+export default Sync;
