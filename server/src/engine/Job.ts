@@ -30,10 +30,20 @@ export interface IJob {
   options: IOptions;
   user: string;
   host: string;
+  port: string;
   src: Array<string>;
   dest: string;
-  port: string;
 }
+
+export const DEFAULT_JOB: IJob = {
+  mode: Mode.Local,
+  options: {},
+  user: "",
+  host: "",
+  port: "",
+  src: [],
+  dest: ""
+};
 
 class Job {
   settings: IJob;
@@ -45,6 +55,8 @@ class Job {
   }
 
   run() {
+    if (this.settings.src.length === 0 || this.settings.dest.length === 0)
+      return;
     const command = this._buildCommand();
     exec(command);
   }

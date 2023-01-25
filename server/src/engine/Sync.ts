@@ -9,7 +9,7 @@ interface ISync {
   name: string;
   description: string;
   schedule: ISchedule;
-  job?: IJob;
+  job: IJob;
 }
 
 class Sync {
@@ -17,7 +17,7 @@ class Sync {
   name: string;
   description: string;
   cron: Cron;
-  job: Job | null;
+  job: Job;
 
   static create(props: Omit<ISync, "id">) {
     const id = uuid();
@@ -26,9 +26,14 @@ class Sync {
     return sync;
   }
 
-  static load(id: ISync["id"]) {
+  static load(id: string) {
     const config = Config.get(id);
-    return new Sync(config);
+    return config ? new Sync({ id, ...config }) : null;
+  }
+
+  static loadAll() {
+    const config = Config.getAll();
+    return Object.keys(config).map((id) => new Sync({ id, ...config[id] }));
   }
 
   constructor(props: ISync) {
@@ -36,7 +41,7 @@ class Sync {
     this.name = props.name;
     this.description = props.description;
     this.cron = new Cron(props.id, props.schedule);
-    this.job = props.job ? new Job(props.job) : null;
+    this.job = new Job(props.job);
   }
 
   updateName(name: string) {
@@ -54,8 +59,8 @@ class Sync {
     this._save();
   }
 
-  updateJob(job: IJob | null) {
-    this.job = job ? new Job(job) : null;
+  updateJob(job: IJob) {
+    this.job = new Job(job);
     this._save();
   }
 
@@ -65,7 +70,7 @@ class Sync {
       name: this.name,
       description: this.description,
       schedule: this.cron.toSerializable(),
-      job: this.job ? this.job.toSerializable() : this.job
+      job: this.job.toSerializable()
     };
   }
 
@@ -75,7 +80,7 @@ class Sync {
   }
 
   runJob() {
-    if (this.job) this.job.run();
+    this.job.run();
   }
 
   _save() {

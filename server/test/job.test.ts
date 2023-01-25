@@ -4,8 +4,53 @@ import { exec } from "child_process";
 
 jest.mock("child_process");
 
-beforeEach(() => {
-  jest.clearAllMocks();
+beforeEach(jest.clearAllMocks);
+
+describe("Mimimum info to run", () => {
+  test("No source", () => {
+    const job = new Job({
+      mode: Job.Mode.Local,
+      options: {},
+      user: "",
+      host: "",
+      port: "",
+      src: [],
+      dest: "dest/dest"
+    });
+
+    job.run();
+    expect(exec).not.toBeCalled();
+  });
+
+  test("No destination", () => {
+    const job = new Job({
+      mode: Job.Mode.Local,
+      options: {},
+      user: "",
+      host: "",
+      port: "",
+      src: ["src/src"],
+      dest: ""
+    });
+
+    job.run();
+    expect(exec).not.toBeCalled();
+  });
+
+  test("Has minimum configuration", () => {
+    const job = new Job({
+      mode: Job.Mode.Local,
+      options: {},
+      user: "",
+      host: "",
+      port: "",
+      src: ["src/src"],
+      dest: "dest/dest"
+    });
+
+    job.run();
+    expect(exec).toBeCalled();
+  });
 });
 
 test("Serialize", () => {

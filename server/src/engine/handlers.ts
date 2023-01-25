@@ -1,14 +1,6 @@
 import Sync from "./Sync";
-import { ISchedule } from "./Cron";
-import { IJob } from "./Job";
-
-const DEFAULT_SCHEDULE: ISchedule = {
-  frequency: "daily",
-  time: {
-    hour: "2",
-    minute: "0"
-  }
-};
+import { ISchedule, DEFAULT_SCHEDULE } from "./Cron";
+import { IJob, DEFAULT_JOB } from "./Job";
 
 interface ICreateProps {
   name: string;
@@ -33,34 +25,38 @@ interface IRunnerProps {
 
 export function handleCreate({ name, description }: ICreateProps) {
   const schedule = DEFAULT_SCHEDULE;
-  const sync = Sync.create({ name, description, schedule });
+  const job = DEFAULT_JOB;
+  const sync = Sync.create({ name, description, schedule, job });
   return sync.toSerializable();
 }
 
-export function handleUpdate({
-  id,
-  name,
-  description,
-  schedule,
-  job
-}: IUpdateProps) {
-  const sync = Sync.load(id);
+export function handleGetAll() {
+  const allSyncs = Sync.loadAll();
+  return allSyncs.map((sync) => sync.toSerializable());
+}
 
-  if (name) sync.updateName(name);
-  if (description) sync.updateDescription(description);
-  if (schedule) sync.updateSchedule(schedule);
-  if (job !== null) sync.updateJob(null);
+export function handleUpdate({ id, ...fields }: IUpdateProps) {
+  const sync = Sync.load(id);
+  if (!sync) return undefined;
+
+  if (fields.name) sync.updateName(fields.name);
+  if (fields.description) sync.updateDescription(fields.description);
+  if (fields.schedule) sync.updateSchedule(fields.schedule);
+  if (fields.job) sync.updateJob(fields.job);
 
   return sync.toSerializable();
 }
 
 export function handleDelete({ id }: IDeleteProps) {
   const sync = Sync.load(id);
+  if (!sync) return undefined;
+
   sync.delete();
   return { id };
 }
 
 export function handleRunner({ id }: IRunnerProps) {
   const sync = Sync.load(id);
+  if (!sync) return;
   sync.runJob();
 }

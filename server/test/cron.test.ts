@@ -1,11 +1,11 @@
 import fs from "fs";
 
-import { resetDirectories } from "./setup";
+import { resetMockDirs } from "./setup";
 
 import Cron from "../src/engine/Cron";
 import { cronDirectory } from "../src/engine/di";
 
-beforeEach(resetDirectories);
+beforeEach(resetMockDirs);
 
 const get = (id: string) => {
   const file = `${cronDirectory}/${id}`;

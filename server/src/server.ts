@@ -15,8 +15,8 @@ app.post("/sync", (req, res) => {
 });
 
 app.patch("/sync", (req, res) => {
-  const { id, name, description, pattern } = req.body;
-  const result = handleUpdate({ id, name, description, pattern });
+  const { id, name, description, schedule, job } = req.body;
+  const result = handleUpdate({ id, name, description, schedule, job });
   res.send(result);
 });
 
@@ -28,7 +28,7 @@ app.delete("/sync", (req, res) => {
 
 app.get("/runner", (req, res) => {
   const { id } = req.query;
-  handleRunner({ id: id as string });
+  if (typeof id === "string") handleRunner({ id });
   res.send();
 });
 

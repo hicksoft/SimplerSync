@@ -1,9 +1,13 @@
 import fs from "fs";
 import { configDirectory } from "./di";
 
+export function getAll() {
+  return _load();
+}
+
 export function get(key: string) {
   const config = _load();
-  return config[key];
+  return key in config ? config[key] : null;
 }
 
 export function save(key: string, value: any) {
@@ -34,6 +38,7 @@ function _write(data: object) {
 }
 
 export default {
+  getAll,
   get,
   save,
   remove

@@ -7,12 +7,12 @@ const configDirectory = "test/mock/config";
 
 inject({ cronDirectory, configDirectory });
 
-export function resetDirectories() {
-  resetDirectory(configDirectory);
-  resetDirectory(cronDirectory);
+export function resetMockDirs() {
+  resetMockDir(configDirectory);
+  resetMockDir(cronDirectory);
 }
 
-function resetDirectory(dir: string) {
+function resetMockDir(dir: string) {
   if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true });
   fs.mkdirSync(dir, { recursive: true });
 }

@@ -23,6 +23,14 @@ export interface ISchedule {
   };
 }
 
+export const DEFAULT_SCHEDULE: ISchedule = {
+  frequency: "daily",
+  time: {
+    hour: "2",
+    minute: "0"
+  }
+};
+
 interface Cron {}
 class Cron {
   id: string;
