@@ -1,4 +1,4 @@
-# SimplerSync
+# SimplerSync (UNDER DEVELOPMENT)
 
 Dockerized rSync with WebUI
 
